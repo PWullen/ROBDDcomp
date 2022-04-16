@@ -14,11 +14,12 @@ def TT_BDD_init(n, p):
     on the probability p of any variable equaling 1 and
     a set of n bits, where n=2^k for k variables.
     """
-    arr = []
+    arr = []  # init probability list
     for i in range(n):
         i = np.random.binomial(1, p)  # utilizing Binomial of n=1 allows
         # for each i to be a Bernoulli trial
         arr.append(i)
+    # init TT vars
     a = ttvar('a')
     b = ttvar('b')
     c = ttvar('c')
