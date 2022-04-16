@@ -2,7 +2,7 @@
 
 from pyeda.boolalg.bdd import _expr2bddnode
 
-from Wullen_Count import TT_BDD_init
+from Wullen_Count import prob_init
 """Importing TT/BDD initialization """
 """importing _expr2bddnode from TT-expr-node conversion"""
 from pyeda.inter import *
@@ -76,11 +76,13 @@ def Wullen_Enum(p):
     """Takes BDD as list:
     Enumerates in lexicographic order, all vectors (x1,x2,...,xn)
     for which f(x1,x2,...,xn)=1"""
-    print("\n\nRunning Enum for probability", p)
-    BDD = TT_BDD_init(64, p)  # n: (2^6=64; 2^8=256)
+    print("Running Enum for probability", p)
+    arr = prob_init(64, p)
+    #BDD = TT_BDD_init(64, p)  # n: (2^6=64)
+    a, b, c, x, y, z = map(ttvar, 'abcxyz')
+    TT = truthtable([a, b, c, x, y, z], arr)
+    f = truthtable2expr(TT)  # pulling TT values and making expression
+    F = expr2bdd(f)  # pulling expression values to make BDD
     print("The list of all satisfying f(x)=1 paths")
-    for i in BDD.satisfy_all():
+    for i in F.satisfy_all():
         print(i)
-
-
-

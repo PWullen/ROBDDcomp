@@ -1,9 +1,5 @@
 # ROBDD computation
 # Peter Wullen
-
-import os
-import numpy as np
-from pyeda.inter import *
 from Wullen_Count import Wullen_Count
 from Wullen_Enum import Wullen_Enum
 from Wullen_Cyclen import Wullen_Cyclen

@@ -1,11 +1,22 @@
 # SAT Count f(x)=1 computation
-
 import numpy as np
 from pyeda.boolalg.bdd import _expr2bddnode
 from pyeda.inter import *
 """Importing numpy for np.random probability functions
    Importing expr2bddnode for DFS operations
    Importing pyeda.inter for logical operations"""
+
+def prob_init(n, p):
+    """
+    prob_init will take n as the number of variables and p as the probability, to create a set of bernoulli trials
+    to append to a list.
+    """
+    arr = []  # init probability list
+    for i in range(n):
+        i = np.random.binomial(1, p)  # utilizing Binomial of n=1 allows
+        # for each i to be a Bernoulli trial
+        arr.append(i)
+    return arr
 
 
 def TT_BDD_init(n, p):
@@ -14,18 +25,9 @@ def TT_BDD_init(n, p):
     on the probability p of any variable equaling 1 and
     a set of n bits, where n=2^k for k variables.
     """
-    arr = []  # init probability list
-    for i in range(n):
-        i = np.random.binomial(1, p)  # utilizing Binomial of n=1 allows
-        # for each i to be a Bernoulli trial
-        arr.append(i)
+    arr = prob_init(n, p)
     # init TT vars
-    a = ttvar('a')
-    b = ttvar('b')
-    c = ttvar('c')
-    x = ttvar('x')
-    y = ttvar('y')
-    z = ttvar('z')
+    a, b, c, x, y, z = map(ttvar, 'abcxyz')
     TT = truthtable([a, b, c, x, y, z], arr)
 
     """The following lines can be uncommented for verification
@@ -43,18 +45,6 @@ def TT_BDD_init(n, p):
     #print(f)  # expression generated from TT
     #print(F.to_dot())  # BDD generated from expression to be output by GraphViz
 
-    """Below is the attempt at going the long way around from satisfy_all"""
-    ff = _expr2bddnode(f)
-    #print("")
-    #print("Now printing made dfs\n")
-    a = bddvar('a')
-    b = bddvar('b')
-    c = bddvar('c')
-    x = bddvar('x')
-    y = bddvar('y')
-    z = bddvar('z')
-    #BDDdfs(ff)
-
     return F
 
 
@@ -66,24 +56,12 @@ def AH6(BDD):
     And(Or(a, b), Or(c, x), Or(y, z))
     """
     F = bdd2expr(BDD)
-    print("Expression from BDD:")
-    print(F)
+    #print("Expression from BDD:")
+    #print(F)
     # init expression variables
-    a = exprvar('a')
-    b = exprvar('b')
-    c = exprvar('c')
-    x = exprvar('x')
-    y = exprvar('y')
-    z = exprvar('z')
-    Fexpand = []
-    variables = a, b, c, x, y, z
-    #for variables in F:
-        #Fexpand.append(variables)
+    a, b, c, x, y, z = map(exprvar, 'abcxyz')
     f = And(Or(a, b), Or(c, x), Or(y, z))  # logical expression of Achilles Heel
-
     print("Achilles Heel of expression:")
-    #aH = AchillesHeel(Fexpand)
-    #print(aH)
     print(f)
     ah = AchillesHeel(a, b, c, x, y, z, simplify=True)  # PyEDA built in Achilles Heel
     """Can uncomment line below for equivalence confirmation of Achilles Heel function
@@ -112,12 +90,13 @@ def Wullen_Count(p):
     then initializes BDD based on init function TT_BDD_init
     Returns count of number of solutions to f(x)=1 and
     returns vector of length n that shows the number 1's in each bead of BDD"""
-    BDD = TT_BDD_init(64, p)  # n=64 for 6 variable TT construction (code in main)
-    AH6(BDD)  # Achilles Heel for 6 variables (code in main)
+
+    BDD = TT_BDD_init(64, p)  # n=64 for 6 variable TT construction
+    AH6(BDD)  # Achilles Heel for 6 variables
     """Can uncomment line below to verify count working correctly"""
     #print(list(BDD.satisfy_all()))
     count = 0
-    for i in BDD.satisfy_all():
+    for _ in BDD.satisfy_all():
         count += 1
     print("The total number of satisfying f(x)=1 is ", count)
     """Can now continue to print out the ROBDD with each node annotated with 

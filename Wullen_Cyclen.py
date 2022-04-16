@@ -1,16 +1,19 @@
-# Cycle graph subset length portion of ROBDD computation
-import numpy as np
-"""Importing numpy for np.random probability functions"""
-from pyeda.boolalg.bdd import _expr2bddnode
-"""importing _expr2bddnode from TT-expr-node conversion"""
+# Cycle graph subset ROBDD computation
 from pyeda.inter import *
-"""Importing pyeda for BDDs/TT/variable assignment"""
-
+import IPython
+import graphviz
+import gvmagic
+import pydot
+import pandas as pd
+"""Importing pyeda for BDDs/TT/variable assignment
+Importing Ipython, graphviz, and gvmagic (+dependencies) for BDD visualization"""
 
 def Wullen_Cyclen(n):
     """Takes input n, Constructs a ROBDD associated in which
     paths to 1 from the root represent an independent subset of nodes of Cn;
-    where Cn is a cycle graph with vertex set of length n"""
+    where Cn is a cycle graph with vertex set of length n.
+
+    Presently only works for inputs 6 and 8, as interior set calculation is hard-coded"""
 
     a, b, c, d, w, x, y, z = map(exprvar, 'abcdwxyz')
     itered = []
@@ -19,18 +22,22 @@ def Wullen_Cyclen(n):
     elif n == 8:
         itered = list(iter_points([a, b, c, d, w, x, y, z]))
     #print(itered)
-    # setup for hardcoded pre-solved ind set
-    finiteSet6 = ["101010", "010101", "100100", "101000", "100010", "010010",
-                  "010100", "010001", "001010", "001001", "000101"]
-    finiteSet6shadow = [{a: 1, b: 0, c: 0, x: 0, y: 0, z: 0}, {a: 0, b: 1, c: 0, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 1, x: 0, y: 0, z: 0},
-                        {a: 0, b: 0, c: 0, x: 1, y: 0, z: 0}, {a: 0, b: 0, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 0, x: 0, y: 0, z: 1},
-                        {a: 1, b: 0, c: 1, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 1, y: 0, z: 1}, {a: 1, b: 0, c: 1, x: 0, y: 0, z: 0},
-                        {a: 1, b: 0, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 1, y: 0, z: 0},
-                        {a: 0, b: 1, c: 0, x: 0, y: 0, z: 1}, {a: 0, b: 0, c: 1, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 1, x: 0, y: 0, z: 1},
-                        {a: 0, b: 0, c: 0, x: 1, y: 0, z: 1}, {a: 1, b: 0, c: 0, x: 1, y: 0, z: 0}]
-    finiteSet8 = ["101010", "010101", "100100", "101000", "100010", "010010",
-                  "010100", "010001", "001010", "001001", "000101"] # needs to be updated
-    finiteSet8shadow = []
+    # setup for hardcoded solved ind set via handwritten work
+    # this is extremely pedantic and not ideal for code
+    finiteSet6shadow = [{a: 1, b: 0, c: 0, x: 0, y: 0, z: 0}, {a: 0, b: 1, c: 0, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 1, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 0, x: 1, y: 0, z: 0}, {a: 0, b: 0, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 0, x: 0, y: 0, z: 1}, {a: 1, b: 0, c: 1, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 1, y: 0, z: 1}, {a: 1, b: 0, c: 1, x: 0, y: 0, z: 0},
+                        {a: 1, b: 0, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, x: 1, y: 0, z: 0}, {a: 0, b: 1, c: 0, x: 0, y: 0, z: 1}, {a: 0, b: 0, c: 1, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 1, x: 0, y: 0, z: 1}, {a: 0, b: 0, c: 0, x: 1, y: 0, z: 1}, {a: 1, b: 0, c: 0, x: 1, y: 0, z: 0}]
+
+    finiteSet8shadow = [{a: 1, b: 0, c: 0, d: 0, w: 0, x: 0, y: 0, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 0, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 1, d: 0, w: 0, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 0, d: 1, w: 0, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 0, d: 0, w: 1, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 0, d: 0, w: 0, x: 1, y: 0, z: 0}, {a: 0, b: 0, c: 0, d: 0, w: 0, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 0, d: 0, w: 0, x: 0, y: 0, z: 1},
+                        {a: 1, b: 0, c: 1, d: 0, w: 1, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, d: 1, w: 0, x: 1, y: 0, z: 1},
+                        {a: 1, b: 0, c: 1, d: 0, w: 1, x: 0, y: 0, z: 0}, {a: 1, b: 0, c: 1, d: 0, w: 0, x: 1, y: 0, z: 0}, {a: 1, b: 0, c: 1, d: 0, w: 0, x: 0, y: 1, z: 0}, {a: 1, b: 0, c: 0, d: 1, w: 0, x: 1, y: 0, z: 0}, {a: 1, b: 0, c: 0, d: 1, w: 0, x: 0, y: 1, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 1, x: 0, y: 1, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 1, x: 0, y: 1, z: 0},
+                        {a: 0, b: 1, c: 0, d: 1, w: 0, x: 1, y: 0, z: 0}, {a: 0, b: 1, c: 0, d: 1, w: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, d: 1, w: 0, x: 0, y: 0, z: 1}, {a: 0, b: 1, c: 0, d: 0, w: 1, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 1, x: 0, y: 0, z: 1}, {a: 0, b: 1, c: 0, d: 0, w: 0, x: 1, y: 0, z: 1},
+                        {a: 0, b: 0, c: 1, d: 0, w: 1, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 1, d: 0, w: 1, x: 0, y: 0, z: 1}, {a: 0, b: 0, c: 1, d: 0, w: 0, x: 1, y: 0, z: 1}, {a: 0, b: 0, c: 0, d: 1, w: 0, x: 1, y: 0, z: 1},
+                        {a: 1, b: 0, c: 1, d: 0, w: 0, x: 0, y: 0, z: 0}, {a: 1, b: 0, c: 0, d: 1, w: 0, x: 0, y: 0, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 1, x: 0, y: 0, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 0, x: 1, y: 0, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 0, x: 0, y: 1, z: 0}, {a: 1, b: 0, c: 0, d: 0, w: 0, x: 0, y: 0, z: 1},
+                        {a: 0, b: 1, c: 0, d: 1, w: 0, x: 0, y: 0, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 1, x: 0, y: 0, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 0, x: 1, y: 0, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 0, x: 0, y: 1, z: 0}, {a: 0, b: 1, c: 0, d: 0, w: 0, x: 0, y: 0, z: 1},
+                        {a: 0, b: 0, c: 1, d: 0, w: 1, x: 0, y: 0, z: 0}, {a: 0, b: 0, c: 1, d: 0, w: 0, x: 1, y: 0, z: 0}, {a: 0, b: 0, c: 1, d: 0, w: 0, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 1, d: 0, w: 0, x: 0, y: 0, z: 1},
+                        {a: 0, b: 0, c: 0, d: 1, w: 0, x: 1, y: 0, z: 0}, {a: 0, b: 0, c: 0, d: 1, w: 0, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 0, d: 1, w: 0, x: 0, y: 0, z: 1},
+                        {a: 0, b: 0, c: 0, d: 0, w: 1, x: 0, y: 1, z: 0}, {a: 0, b: 0, c: 0, d: 0, w: 1, x: 0, y: 0, z: 1}, {a: 0, b: 0, c: 0, d: 0, w: 0, x: 1, y: 0, z: 1},
+                        ]
     finSetIn = []
     if n == 6:
         finSetIn = finiteSet6shadow
@@ -40,15 +47,14 @@ def Wullen_Cyclen(n):
     TTlistAdapted = []
     for _ in itered:
         TTlistAdapted.append(0)  # init TT list to all 0 outputs
+
     for i in range(len(TTlistAdapted)):  # index of TT list created
-        for j in range(len(finSetIn)):  # index of iterated set
+        for j in range(len(finSetIn)):  # index of finite ind set
             finKeys = finSetIn[j].items()
-            #print(finKeys)
-            for k in range(len(itered)):  # index of finite ind set
+            for k in range(len(itered)):  # index of iterated set
                 iterKeys = itered[k].items()
                 if finKeys == iterKeys:
                     TTlistAdapted[k] = 1
-    #print(TTlistAdapted)
     a = ttvar('a')
     b = ttvar('b')
     c = ttvar('c')
@@ -67,4 +73,3 @@ def Wullen_Cyclen(n):
     F = expr2bdd(f)
     #print(TT)  #can uncomment for TT printout
     print(F.to_dot())
-
