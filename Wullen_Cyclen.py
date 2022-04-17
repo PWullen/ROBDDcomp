@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Cycle graph subset ROBDD computation
 from pyeda.inter import *
 import IPython
@@ -71,5 +72,7 @@ def Wullen_Cyclen(n):
     # conversion from TT to BDD
     f = truthtable2expr(TT)
     F = expr2bdd(f)
-    #print(TT)  #can uncomment for TT printout
-    print(F.to_dot())
+    """For Truth table and logic expression uncomment below """
+    #print(TT)
+    #print(f)
+    print(F.to_dot())  # .to_dot() GraphViz BDD visualization

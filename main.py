@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 # ROBDD computation
 # Peter Wullen
 from Wullen_Count import Wullen_Count
 from Wullen_Enum import Wullen_Enum
 from Wullen_Cyclen import Wullen_Cyclen
-
 import IPython
 import graphviz
 import gvmagic
@@ -17,8 +17,6 @@ Importing enumeration function
 Importing cyclen function
 Importing _expr2bddnode from node conversion
 Importing Ipython, graphviz, and gvmagic (+dependencies) for BDD visualization"""
-
-
 
 
 def testdebug():

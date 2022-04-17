@@ -1,0 +1,17 @@
+from pyeda.boolalg.bdd import _expr2bddnode
+#Importing expr2bddnode for DFS operations
+
+def BDDdfs(BDDNode):
+    """
+    BDDdfs will perform a preorder depth-first-search to identify the tuple of
+    (vk,lk,hk) outlined to be vk = node id, lk = instructions for vk=0, hk = instructions for vk=1
+    (which also correspond to the nodes pointed to by the root vk) and print these values.
+    BDDdfs takes the PyEDA class BDDNode as input and utilizes the class behavior to assign
+    root, lo, and hi.
+    """
+    if BDDNode is None:
+        return
+    else:
+        print(BDDNode.root)
+        BDDdfs(BDDNode.lo)
+        BDDdfs(BDDNode.hi)

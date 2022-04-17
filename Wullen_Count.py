@@ -1,10 +1,16 @@
+#!/usr/bin/env python3
 # SAT Count f(x)=1 computation
 import numpy as np
-from pyeda.boolalg.bdd import _expr2bddnode
 from pyeda.inter import *
+import IPython
+import graphviz
+import gvmagic
+import pydot
+import pandas as pd
 """Importing numpy for np.random probability functions
-   Importing expr2bddnode for DFS operations
-   Importing pyeda.inter for logical operations"""
+   Importing pyeda.inter for logical operations
+   Importing Ipython, graphviz, and gvmagic (+dependencies) for BDD visualization"""
+
 
 def prob_init(n, p):
     """
@@ -43,8 +49,7 @@ def TT_BDD_init(n, p):
     """The following lines can be uncommented to view the expression generated
     from the TT values, and the following BDD generated from the expression"""
     #print(f)  # expression generated from TT
-    #print(F.to_dot())  # BDD generated from expression to be output by GraphViz
-
+    #print(F.to_dot())  # .to_dot() GraphViz BDD visualization
     return F
 
 
@@ -66,23 +71,8 @@ def AH6(BDD):
     ah = AchillesHeel(a, b, c, x, y, z, simplify=True)  # PyEDA built in Achilles Heel
     """Can uncomment line below for equivalence confirmation of Achilles Heel function
     made versus built in PyEDA Achilles Heel"""
-    #print(ah)
+    #print(ah)  # built-in PyEDA Achilles Heel
     return f
-
-def BDDdfs(BDDNode):
-    """
-    BDDdfs will perform a preorder depth-first-search to identify the tuple of
-    (vk,lk,hk) outlined to be vk = node id, lk = instructions for vk=0, hk = instructions for vk=1
-    (which also correspond to the nodes pointed to by the root vk) and print these values.
-    BDDdfs takes the PyEDA class BDDNode as input and utilizes the class behavior to assign
-    root, lo, and hi.
-    """
-    if BDDNode is None:
-        return
-    else:
-        print(BDDNode.root)
-        BDDdfs(BDDNode.lo)
-        BDDdfs(BDDNode.hi)
 
 
 def Wullen_Count(p):
@@ -99,7 +89,13 @@ def Wullen_Count(p):
     for _ in BDD.satisfy_all():
         count += 1
     print("The total number of satisfying f(x)=1 is ", count)
-    """Can now continue to print out the ROBDD with each node annotated with 
-    the number solutions associated with that node"""
-
-
+    """ROBDD vector for node contributions to solutions incomplete
+    latest iteration below commented out"""
+    #countval = 0
+    #dd = []
+    #for paths in BDD.satisfy_all():
+        #counts = dict()
+        #pathCache = [paths.values()]  # list for paths.items()
+        #for d in pathCache:  # each path in cache iterates as dict
+            #dd.append(d)
+    #print(dd)
